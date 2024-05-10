@@ -29,7 +29,6 @@ def trace(url):
 
     traceroute = str(soup.find('pre'))
 
-
     return traceroute
 
 
@@ -59,7 +58,7 @@ def capture_full_page_pdf(url):
 
     # Вычисление коэффициента масштабирования
     scale_factor = A4[0] / 1600  # Ширина A4 разделенная на ширину браузера
-
+    i = 0
     # Цикл по странице и добавление содержимого в PDF
     while current_height < total_height:
         if current_height > 0:
@@ -67,7 +66,7 @@ def capture_full_page_pdf(url):
             time.sleep(3)  # Ожидание завершения прокрутки
 
         # Сохранение скриншота текущего вида
-        screenshot_path = f"temp_{current_height}.png"
+        screenshot_path = f"temp_{i}.png"
         driver.save_screenshot(screenshot_path)
 
         # Добавление скриншота в PDF с масштабированием
@@ -84,11 +83,17 @@ def capture_full_page_pdf(url):
 
         # Обновление текущей высоты
         current_height += int(A4[1] / scale_factor)
+        i += 1
 
     # Закрытие холста PDF
     c.save()
     # Закрытие драйвера
     driver.quit()
+
+    i_0 = 0
+    while i_0 < i:
+        os.remove(f"temp_{i_0}.png")
+        i_0 += 1
 
 
 def create_pdf(url):
