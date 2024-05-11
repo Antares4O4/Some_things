@@ -28,7 +28,7 @@ def trace(url):
     soup = BeautifulSoup(response.text, 'lxml')
 
     traceroute = str(soup.find('pre'))
-    traceroute = traceroute.replace("  ", "|--")
+    traceroute = traceroute.replace("  ", "   ")
     return traceroute
 
 
