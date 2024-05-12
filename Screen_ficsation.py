@@ -1,20 +1,35 @@
 import os
+<<<<<<< HEAD
 
+=======
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
+>>>>>>> e43b44e (add2)
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import ParagraphStyle
+<<<<<<< HEAD
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
 from reportlab.lib.pagesizes import letter
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+=======
+>>>>>>> e43b44e (add2)
 import random
 import datetime
 import PyPDF2
 import whois
 import time
+<<<<<<< HEAD
 
+=======
+>>>>>>> e43b44e (add2)
 from bs4 import BeautifulSoup
 import requests
 
@@ -28,20 +43,29 @@ def trace(url):
     soup = BeautifulSoup(response.text, 'lxml')
 
     traceroute = str(soup.find('pre'))
+<<<<<<< HEAD
     traceroute = traceroute.replace("  ", "   ")
+=======
+>>>>>>> e43b44e (add2)
     return traceroute
 
 
 def capture_full_page_pdf(url):
+<<<<<<< HEAD
     # Настройка параметров Chrome
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Запуск Chrome в безголовом режиме (без GUI)
+=======
+    chrome_options = Options()
+    # chrome_options.add_argument("--headless")  # Запуск Chrome в безголовом режиме (без GUI)
+>>>>>>> e43b44e (add2)
     chrome_options.add_argument("--window-size=1600,1200")  # Установка широких размеров окна
     chrome_options.add_argument("--start-maximized")  # Максимизация окна браузера
     chrome_options.add_argument("--disable-infobars")
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--disable-popup-blocking")
 
+<<<<<<< HEAD
     # Инициализация драйвера Chrome
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
@@ -67,6 +91,42 @@ def capture_full_page_pdf(url):
 
         # Сохранение скриншота текущего вида
         screenshot_path = f"temp_{i}.png"
+=======
+    # Создаем экземпляр браузера
+    driver = webdriver.Chrome(options=chrome_options)
+
+    # Открываем страницу
+    driver.get(url)
+
+    # Максимизируем окно браузера для лучшего скриншота
+    driver.maximize_window()
+
+    # Ожидаем загрузки элемента body
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
+
+    # Определяем высоту страницы
+    total_height = driver.execute_script("return document.body.scrollHeight")
+    output_file = "screenshot.pdf"
+    # Задаем размеры окна браузера, чтобы сделать скриншот всей страницы
+    driver.set_window_size(1920, total_height)
+    c = canvas.Canvas(output_file, pagesize=A4)
+    # Прокручиваем страницу и сохраняем скриншоты
+    scroll_height = 0
+    screenshot_count = 0
+
+    while scroll_height < total_height:
+        # Прокручиваем страницу на один экран
+        driver.execute_script("window.scrollTo(0, arguments[0]);", scroll_height)
+        time.sleep(1)  # Подождем немного после прокрутки
+        scroll_height += driver.execute_script("return window.innerHeight;")
+
+        # Сохраняем скриншот
+        screenshot_count += 1
+
+        screenshot_path = f"screenshot_{screenshot_count}.png"
+
+>>>>>>> e43b44e (add2)
         driver.save_screenshot(screenshot_path)
 
         # Добавление скриншота в PDF с масштабированием
@@ -76,11 +136,16 @@ def capture_full_page_pdf(url):
         c.setFont("Helvetica", 8)
         c.drawString(10, A4[1] - 20, f"URL: {url}")
         c.drawString(A4[0] - 180, A4[1] - 20,
+<<<<<<< HEAD
                      f"Date of fixation: {datetime.datetime.today().strftime('%m.%d.%Y %H:%M')}")
+=======
+                     f"Date of fixation: {datetime.datetime.today().strftime('%d.%m.%Y %H:%M')}")
+>>>>>>> e43b44e (add2)
 
         # Переход на следующую страницу
         c.showPage()
 
+<<<<<<< HEAD
         # Обновление текущей высоты
         current_height += int(A4[1] / scale_factor)
         i += 1
@@ -94,11 +159,27 @@ def capture_full_page_pdf(url):
     while i_0 < i:
         os.remove(f"temp_{i_0}.png")
         i_0 += 1
+=======
+    # Закрытие холста PDF
+    c.save()
+
+    # Закрываем браузер
+    driver.quit()
+
+    i = 0
+    while i < screenshot_count:
+        i += 1
+        os.remove(f"screenshot_{i}.png")
+>>>>>>> e43b44e (add2)
 
 
 def create_pdf(url):
     num = str(random.randint(0, 9999999999999))
+<<<<<<< HEAD
     now = str(datetime.datetime.today().strftime('%m.%d.%Y %H:%M'))
+=======
+    now = str(datetime.datetime.today().strftime('%d.%m.%Y %H:%M'))
+>>>>>>> e43b44e (add2)
     content = []
 
     content.append(Spacer(1, 20))
@@ -133,7 +214,11 @@ def create_pdf(url):
     a = a.replace("\n", "<br/>")
     a = a.replace("_", " ")
 
+<<<<<<< HEAD
     doc = SimpleDocTemplate("report.pdf", pagesize=letter)
+=======
+    doc = SimpleDocTemplate("report.pdf", pagesize=A4)
+>>>>>>> e43b44e (add2)
     doc.build(content)
 
     content1 = []
@@ -147,7 +232,11 @@ def create_pdf(url):
         f"<br/>{a}<br/>",
         ParagraphStyle(name='Name', fontFamily='Arial', fontSize=10, alignment=TA_JUSTIFY)))
 
+<<<<<<< HEAD
     doc = SimpleDocTemplate("report1.pdf", pagesize=letter)
+=======
+    doc = SimpleDocTemplate("report1.pdf", pagesize=A4)
+>>>>>>> e43b44e (add2)
     doc.build(content1)
 
     content2 = []
@@ -161,7 +250,11 @@ def create_pdf(url):
         f"<br/><br/>{trace(url)}<br/><br/>",
         ParagraphStyle(name='Name', fontFamily='Arial', fontSize=10, alignment=TA_JUSTIFY)))
 
+<<<<<<< HEAD
     doc = SimpleDocTemplate("report2.pdf", pagesize=letter)
+=======
+    doc = SimpleDocTemplate("report2.pdf", pagesize=A4)
+>>>>>>> e43b44e (add2)
     doc.build(content2)
 
 
