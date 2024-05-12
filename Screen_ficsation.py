@@ -3,6 +3,8 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -82,10 +84,11 @@ def capture_full_page_pdf(url):
         c.drawImage(screenshot_path, 0, 0, width=A4[0], height=A4[1], preserveAspectRatio=True)
 
         # Добавление URL-адреса и даты фиксации над скриншотом
-        c.setFont("Helvetica", 8)
+        pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+        c.setFont('FreeSans', 9)
         c.drawString(10, A4[1] - 20, f"URL: {url}")
         c.drawString(A4[0] - 180, A4[1] - 20,
-                     f"Date of fixation: {datetime.datetime.today().strftime('%d.%m.%Y %H:%M')}")
+                     f"Дата фиксации: {datetime.datetime.today().strftime('%d.%m.%Y %H:%M')}")
 
         # Переход на следующую страницу
         c.showPage()
@@ -105,31 +108,40 @@ def capture_full_page_pdf(url):
 def create_pdf(url):
     num = str(random.randint(0, 9999999999999))
     now = str(datetime.datetime.today().strftime('%d.%m.%Y %H:%M'))
+
+
+    pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf', 'UTF-8'))
+    pdfmetrics.registerFont(TTFont('FreeSansBold', 'FreeSansBold.ttf', 'UTF-8'))
+
+
+
     content = []
+
+    body_style_normal = ParagraphStyle('Body', fontName="FreeSans", fontSize=12, alignment=TA_JUSTIFY)
+    body_style_bold = ParagraphStyle('Body', fontName="FreeSansBold", fontSize=15, alignment=TA_CENTER)
+    body_style_bold_right = ParagraphStyle('Body', fontName="FreeSansBold", fontSize=9, alignment=TA_RIGHT)
+
+
 
     content.append(Spacer(1, 20))
 
     content.append(
         Paragraph(
-            f"<b> PROTOCOL " + "No " + f"{num} on {now} UTC+06:00</b> <br/>Automated Inspection of Information on the Internet<br/>",
-            ParagraphStyle(name='Name', fontFamily='Arial', fontSize=14, alignment=TA_CENTER)))
+            f"ПРОТОКОЛ " + "№ " + f"{num} от {now} UTC+06:00<br/>автоматизированного осмотра информации в сети интернет<br/>",
+            body_style_bold))
     content.append(Spacer(1, 50))
 
     content.append(Paragraph(
-        "The following information was recorded by the automated system LABA_3:<br/>",
-        ParagraphStyle(name='Name', fontFamily='Arial', fontSize=12, alignment=TA_JUSTIFY)))
+        "Автоматизированной системой LABA_3 (далее по тексту «Система») была произведена фиксация следующей информации в сети Интернет:<br/>",body_style_normal))
 
     content.append(Paragraph(
-        f" <ol><li>Web page located at: {url}</li></ol><br/>",
-        ParagraphStyle(name='Name', fontFamily='Arial', fontSize=12, alignment=TA_JUSTIFY)))
+        f"<br/><b> Страница в сети интернет расположенная по адресу:</b> {url}<br/>",body_style_normal))
 
     content.append(Paragraph(
-        "<br/><b>Inspection tasks:</b> Record information from the specified link.<br/>",
-        ParagraphStyle(name='Name', fontFamily='Arial', fontSize=12, alignment=TA_JUSTIFY)))
+        "<br/>Задачи осмотра: зафиксировать информацию, размещенную по указанной выше ссылке.<br/>",body_style_normal))
 
     content.append(Paragraph(
-        "<br/><b>Equipment and software used:</b> <ul><li>Software complex LABA_3</li></ul><br/>",
-        ParagraphStyle(name='Name', fontFamily='Arial', fontSize=12, alignment=TA_JUSTIFY)))
+        "<br/>Оборудование и используемое программное обеспечение: Программный комплекс по фиксации информации в сети Интернет LABA_3<br/>",body_style_normal))
 
     a = str(whois.whois(url))
     symb_to_rem = "[,]{}\""
@@ -145,13 +157,12 @@ def create_pdf(url):
     content1 = []
 
     content1.append(Paragraph(
-        f"<br/>Appendix 1 <br/> to the protocol of automated inspection of information on the Internet " + "No " + f"{num} <br/>Reques"
-                                                                                                                   f"t for WHOIS information<br/>",
-        ParagraphStyle(name='Name', fontFamily='Arial', fontSize=10, alignment=TA_RIGHT)))
+        f"<br/>Приложение 1 <br/> к протоколу автоматизированного осмотра информации в сети интернет " + "№ " + f"{num} <br/>Запрос сведений WHOIS и протокол технической проверки в отношении {url}<br/>",
+        body_style_bold_right))
 
     content1.append(Paragraph(
         f"<br/>{a}<br/>",
-        ParagraphStyle(name='Name', fontFamily='Arial', fontSize=10, alignment=TA_JUSTIFY)))
+        body_style_normal))
 
     doc = SimpleDocTemplate("report1.pdf", pagesize=A4)
     doc.build(content1)
@@ -159,20 +170,19 @@ def create_pdf(url):
     content2 = []
 
     content2.append(Paragraph(
-        f"<br/>Appendix 1 <br/> to the protocol of automated inspection of information on the Internet " + "No " + f"{num} <br/>Reques"
-                                                                                                                   f"t for Tcp trace route information<br/>",
-        ParagraphStyle(name='Name', fontFamily='Arial', fontSize=10, alignment=TA_RIGHT)))
+        f"<br/> Приложение 2 <br/> к протоколу автоматизированного осмотра информации в сети интернет " + "№ " + f"{num} <br/> Запрос сведений DNS и протокол технической проверки в отношении {url} <br/>",
+        body_style_bold_right))
 
     content2.append(Paragraph(
         f"<br/><br/>{trace(url)}<br/><br/>",
-        ParagraphStyle(name='Name', fontFamily='Arial', fontSize=10, alignment=TA_JUSTIFY)))
+        body_style_normal))
 
     doc = SimpleDocTemplate("report2.pdf", pagesize=A4)
     doc.build(content2)
 
 
 if __name__ == "__main__":
-    url = "https://omsu.ru"
+    url = "https://qna.habr.com/q/1129656"
     create_pdf(url)
 
     capture_full_page_pdf(url)
