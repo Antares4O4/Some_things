@@ -1,21 +1,21 @@
-import os
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
-from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import random
-import datetime
-import PyPDF2
-import whois
-import time
-from bs4 import BeautifulSoup
-import requests
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium import webdriver
+from bs4 import BeautifulSoup
+import requests
+import datetime
+import random
+import PyPDF2
+import whois
+import time
+import os
 
 
 def trace(url):
@@ -33,7 +33,7 @@ def trace(url):
 
 def capture_full_page_pdf(url):
     chrome_options = Options()
-    # chrome_options.add_argument("--headless")  # Запуск Chrome в безголовом режиме (без GUI)
+    # chrome_options.add_argument("--headless")  # Запуск Chrome в безголовом режиме (без GUI) (Не работает)
     chrome_options.add_argument("--window-size=1600,1200")  # Установка широких размеров окна
     chrome_options.add_argument("--start-maximized")  # Максимизация окна браузера
     chrome_options.add_argument("--disable-infobars")
@@ -56,9 +56,11 @@ def capture_full_page_pdf(url):
     # Определяем высоту страницы
     total_height = driver.execute_script("return document.body.scrollHeight")
     output_file = "screenshot.pdf"
+
     # Задаем размеры окна браузера, чтобы сделать скриншот всей страницы
     driver.set_window_size(1920, total_height)
     c = canvas.Canvas(output_file, pagesize=A4)
+
     # Прокручиваем страницу и сохраняем скриншоты
     scroll_height = 0
     screenshot_count = 0
@@ -172,8 +174,6 @@ def create_pdf(url):
 if __name__ == "__main__":
     url = "https://omsu.ru"
     create_pdf(url)
-
-    # Инициализация общего прогресс-бара
 
     capture_full_page_pdf(url)
 
