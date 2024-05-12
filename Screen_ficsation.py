@@ -29,13 +29,15 @@ def trace(url):
     soup = BeautifulSoup(response.text, 'lxml')
 
     traceroute = str(soup.find('pre'))
-    traceroute = traceroute.replace("  ", "   ")
+
     return traceroute
 
 
 def capture_full_page_pdf(url):
     chrome_options = Options()
+
     # chrome_options.add_argument("--headless")  # Запуск Chrome в безголовом режиме (без GUI) (Не работает)
+
     chrome_options.add_argument("--window-size=1600,1200")  # Установка широких размеров окна
     chrome_options.add_argument("--start-maximized")  # Максимизация окна браузера
     chrome_options.add_argument("--disable-infobars")
@@ -100,6 +102,7 @@ def capture_full_page_pdf(url):
     driver.quit()
 
     i = 0
+
     while i < screenshot_count:
         i += 1
         os.remove(f"screenshot_{i}.png")
@@ -109,11 +112,8 @@ def create_pdf(url):
     num = str(random.randint(0, 9999999999999))
     now = str(datetime.datetime.today().strftime('%d.%m.%Y %H:%M'))
 
-
     pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf', 'UTF-8'))
     pdfmetrics.registerFont(TTFont('FreeSansBold', 'FreeSansBold.ttf', 'UTF-8'))
-
-
 
     content = []
 
@@ -121,33 +121,35 @@ def create_pdf(url):
     body_style_bold = ParagraphStyle('Body', fontName="FreeSansBold", fontSize=15, alignment=TA_CENTER)
     body_style_for_Appendix = ParagraphStyle('Body', fontName="FreeSansBold", fontSize=9, alignment=TA_RIGHT)
 
-
-
     content.append(Spacer(1, 20))
 
     content.append(
         Paragraph(
             f"ПРОТОКОЛ " + "№ " + f"{num} от {now} UTC+06:00<br/>автоматизированного осмотра информации в сети интернет<br/>",
             body_style_bold))
+
     content.append(Spacer(1, 50))
 
     content.append(Paragraph(
-        "Автоматизированной системой LABA_3 (далее по тексту «Система») была произведена фиксация следующей информации в сети Интернет:<br/>",body_style_normal))
+        "Автоматизированной системой LABA_3 (далее по тексту «Система») была произведена фиксация следующей информации в сети Интернет:<br/>",
+        body_style_normal))
 
     content.append(Paragraph(
-        f"<br/><b> Страница в сети интернет расположенная по адресу:</b> {url}<br/>",body_style_normal))
+        f"<br/><b> Страница в сети интернет расположенная по адресу:</b> {url}<br/>", body_style_normal))
 
     content.append(Paragraph(
-        "<br/>Задачи осмотра: зафиксировать информацию, размещенную по указанной выше ссылке.<br/>",body_style_normal))
+        "<br/>Задачи осмотра: зафиксировать информацию, размещенную по указанной выше ссылке.<br/>", body_style_normal))
 
     content.append(Paragraph(
-        "<br/>Оборудование и используемое программное обеспечение: Программный комплекс по фиксации информации в сети Интернет LABA_3<br/>",body_style_normal))
+        "<br/>Оборудование и используемое программное обеспечение: Программный комплекс по фиксации информации в сети Интернет LABA_3<br/>",
+        body_style_normal))
 
     a = str(whois.whois(url))
     symb_to_rem = "[,]{}\""
 
     for symbol in symb_to_rem:
         a = a.replace(symbol, "")
+
     a = a.replace("\n", "<br/>")
     a = a.replace("_", " ")
 
