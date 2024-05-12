@@ -119,7 +119,7 @@ def create_pdf(url):
 
     body_style_normal = ParagraphStyle('Body', fontName="FreeSans", fontSize=12, alignment=TA_JUSTIFY)
     body_style_bold = ParagraphStyle('Body', fontName="FreeSansBold", fontSize=15, alignment=TA_CENTER)
-    body_style_bold_right = ParagraphStyle('Body', fontName="FreeSansBold", fontSize=9, alignment=TA_RIGHT)
+    body_style_for_Appendix = ParagraphStyle('Body', fontName="FreeSansBold", fontSize=9, alignment=TA_RIGHT)
 
 
 
@@ -158,7 +158,7 @@ def create_pdf(url):
 
     content1.append(Paragraph(
         f"<br/>Приложение 1 <br/> к протоколу автоматизированного осмотра информации в сети интернет " + "№ " + f"{num} <br/>Запрос сведений WHOIS и протокол технической проверки в отношении {url}<br/>",
-        body_style_bold_right))
+        body_style_for_Appendix))
 
     content1.append(Paragraph(
         f"<br/>{a}<br/>",
@@ -171,7 +171,7 @@ def create_pdf(url):
 
     content2.append(Paragraph(
         f"<br/> Приложение 2 <br/> к протоколу автоматизированного осмотра информации в сети интернет " + "№ " + f"{num} <br/> Запрос сведений DNS и протокол технической проверки в отношении {url} <br/>",
-        body_style_bold_right))
+        body_style_for_Appendix))
 
     content2.append(Paragraph(
         f"<br/><br/>{trace(url)}<br/><br/>",
