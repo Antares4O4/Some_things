@@ -1,20 +1,16 @@
 import os
-
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
-from reportlab.lib.pagesizes import letter
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-
 import random
 import datetime
 import PyPDF2
 import whois
 import time
-
 from bs4 import BeautifulSoup
 import requests
 
@@ -35,7 +31,7 @@ def trace(url):
 def capture_full_page_pdf(url):
     # Настройка параметров Chrome
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Запуск Chrome в безголовом режиме (без GUI)
+    # chrome_options.add_argument("--headless")  # Запуск Chrome в безголовом режиме (без GUI)
     chrome_options.add_argument("--window-size=1600,1200")  # Установка широких размеров окна
     chrome_options.add_argument("--start-maximized")  # Максимизация окна браузера
     chrome_options.add_argument("--disable-infobars")
@@ -47,7 +43,7 @@ def capture_full_page_pdf(url):
     driver.get(url)
 
     # Вычисление высоты страницы
-    total_height = driver.execute_script("return document.documentElement.scrollHeight")
+    total_height = driver.execute_script("return document.body.scrollHeight")
 
     # Инициализация холста PDF
     output_file = "screenshot.pdf"
@@ -61,9 +57,11 @@ def capture_full_page_pdf(url):
     i = 0
     # Цикл по странице и добавление содержимого в PDF
     while current_height < total_height:
-        if current_height > 0:
-            driver.execute_script("window.scrollTo(0,document.documentElement.scrollHeight);")  # Прокрутка вниз
-            time.sleep(3)  # Ожидание завершения прокрутки
+        # Прокручиваем страницу на один экран
+        driver.execute_script("window.scrollTo(0, arguments[0]);", current_height)
+        time.sleep(1)  # Подождем немного после прокрутки
+        current_height += driver.execute_script("return window.innerHeight;")
+
 
         # Сохранение скриншота текущего вида
         screenshot_path = f"temp_{i}.png"
@@ -91,6 +89,7 @@ def capture_full_page_pdf(url):
     driver.quit()
 
     i_0 = 0
+
     while i_0 < i:
         os.remove(f"temp_{i_0}.png")
         i_0 += 1
@@ -133,7 +132,7 @@ def create_pdf(url):
     a = a.replace("\n", "<br/>")
     a = a.replace("_", " ")
 
-    doc = SimpleDocTemplate("report.pdf", pagesize=letter)
+    doc = SimpleDocTemplate("report.pdf", pagesize=A4)
     doc.build(content)
 
     content1 = []
@@ -147,7 +146,7 @@ def create_pdf(url):
         f"<br/>{a}<br/>",
         ParagraphStyle(name='Name', fontFamily='Arial', fontSize=10, alignment=TA_JUSTIFY)))
 
-    doc = SimpleDocTemplate("report1.pdf", pagesize=letter)
+    doc = SimpleDocTemplate("report1.pdf", pagesize=A4)
     doc.build(content1)
 
     content2 = []
@@ -161,7 +160,7 @@ def create_pdf(url):
         f"<br/><br/>{trace(url)}<br/><br/>",
         ParagraphStyle(name='Name', fontFamily='Arial', fontSize=10, alignment=TA_JUSTIFY)))
 
-    doc = SimpleDocTemplate("report2.pdf", pagesize=letter)
+    doc = SimpleDocTemplate("report2.pdf", pagesize=A4)
     doc.build(content2)
 
 
