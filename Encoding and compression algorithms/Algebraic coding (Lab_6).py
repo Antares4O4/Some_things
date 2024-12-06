@@ -1,9 +1,8 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QLabel, QLineEdit, QPushButton,
-                             QTextEdit, QMessageBox, QComboBox)
+                             QTextEdit, QMessageBox)
 from PyQt5.QtGui import QFont
-from collections import Counter
 
 # Вероятности английских букв из таблицы
 ENGLISH_FREQ = {
@@ -230,7 +229,7 @@ class ArithmeticCodingGUI(QMainWindow):
                 f'Исходный размер: {original_bits} бит\n'
                 f'Размер после кодирования: {encoded_bits} бит\n'
                 f'Степень сжатия: {compression_ratio:.2f}\n'
-                f'{"-" * 50}'
+                f'{"-" * 144}'
             )
 
         self.results_display.setText('\n'.join(results))
