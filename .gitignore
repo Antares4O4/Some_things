@@ -5,6 +5,9 @@ __pycache__/
 output.pdf
 # C extensions
 *.so
+\.idea
+Encoding and compression algorithms/.idea
+Software and Hardware for Information Protection/.idea
 
 # Distribution / packaging
 .Python
